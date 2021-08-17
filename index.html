@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Coding Quiz</title>
+      <link rel="stylesheet" href="./assets/css/style.css" />
+   </head>
+   <body>
+      <header>
+         <div class="topo-block">
+            <nav class="high-scores">
+               <a href="#view-high-scores">View High Scores</a>
+            </nav>
+            <div class="timer">
+               <p>Time:</p>
+               <p>0</p>
+            </div>
+         </div>
+      </header>
+
+      <main>
+         <div class="start-page">
+            <h1>Coding Quiz Challenge</h1>
+            <p>
+               Try answer the following code-related questions within the time limit. Keep in mind that incorrect
+               answers will penalize your score/time by ten seconds!
+            </p>
+            <button class="btn" type="submit">Start Quiz</button>
+         </div>
+
+         <section class="questions">
+            <div>
+               <h1>Question</h1>
+               <ol>
+                  <li>Answer 0</li>
+                  <li>Answer 1</li>
+                  <li>Answer 2</li>
+                  <li>Answer 3</li>
+               </ol>
+            </div>
+            <div>
+               <p>Correct/Wrong!</p>
+            </div>
+         </section>
+         <section class="all-done">
+            <h1>All Done!</h1>
+            <p>Your final score is: <span>22</span>.</p>
+            <p>Enter intitials:</p>
+            <input type="text" name="intitials" class="intitials" />
+            <button class="btn" type="submit">Submit</button>
+         </section>
+         <section class="high-scores">
+            <h1>High Scores</h1>
+            <div class="high-score-wrapper">
+               <ol class="high-score-list">
+                  <li>JP - 99</li>
+                  <li>EP - 65</li>
+               </ol>
+            </div>
+            <button class="btn" type="button">Go Back</button>
+            <button class="btn" type="reset">Clear High Scores</button>
+         </section>
+      </main>
+
+      <script src="./assets/js/script.js"></script>
+   </body>
+</html>

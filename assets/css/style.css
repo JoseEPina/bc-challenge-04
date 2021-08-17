@@ -1,0 +1,15 @@
+* {
+   box-sizing: border-box;
+}
+
+:root {
+   --primary-color: #ffffff;
+}
+
+body {
+}
+
+header {
+   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
+      sans-serif;
+}
