@@ -28,6 +28,10 @@ const QA_SET = [
 const BUTTONS = 4;
 const TIME_LIMIT = 75;
 
+var startQuizBtn = document.querySelector("#start-quiz");
+var answerBtn = document.querySelector("#answer-buttons");
+console.log(answerBtn);
+
 var myMain = document.querySelector("main");
 // Copying DOM sections into Global variables; to manage page display.
 var startQuizDiv = document.querySelector("#start-page");
@@ -40,11 +44,6 @@ myMain.removeChild(startQuizDiv);
 myMain.removeChild(qAndADiv);
 myMain.removeChild(allDoneDiv);
 myMain.removeChild(highScoresDiv);
-
-var showQAndADiv = function () {
-   myMain.removeChild(startQuizDiv);
-   myMain.appendChild(qAndADiv);
-};
 
 var startControls = function () {
    var timeCounter = TIME_LIMIT;
@@ -61,14 +60,30 @@ var displayOneQuestion = function () {
    }
 };
 
+var showQAndADiv = function () {
+   myMain.removeChild(startQuizDiv);
+   myMain.appendChild(qAndADiv);
+};
+
 var processQAndADiv = function () {
    showQAndADiv();
    displayOneQuestion();
    startControls();
+
    // console.log(displayQuestion);
 };
 
 // Display start quiz page back to DOM.
 myMain.appendChild(startQuizDiv);
-var startQuizBtn = document.querySelector("#start-quiz");
 startQuizBtn.addEventListener("click", processQAndADiv);
+answerBtn.addEventListener("click", function () {
+   var choice = event.target;
+   var choiceIndex = choice.id.substring(4);
+   var result = document.querySelector("#right-wrong");
+   console.log(choiceIndex, QA_SET[0].correctAnswerIndex);
+   if (parseInt(choiceIndex) === QA_SET[0].correctAnswerIndex) {
+      result.innerHTML = "Correct!";
+   } else {
+      result.innerHTML = "Wrong!";
+   }
+});
