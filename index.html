@@ -6,6 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Coding Quiz</title>
       <link rel="stylesheet" href="./assets/css/style.css" />
+      <link rel="shortcut icon" href="#" />
    </head>
    <body>
       <header>
@@ -14,44 +15,40 @@
                <a href="#view-high-scores">View High Scores</a>
             </nav>
             <div class="timer">
-               <p>Time:</p>
-               <p>0</p>
+               <p>Time: <span id="timer"></span></p>
             </div>
          </div>
       </header>
 
       <main>
-         <div class="start-page">
+         <div class="start-page" id="start-page">
             <h1>Coding Quiz Challenge</h1>
             <p>
                Try answer the following code-related questions within the time limit. Keep in mind that incorrect
                answers will penalize your score/time by ten seconds!
             </p>
-            <button class="btn" type="submit">Start Quiz</button>
+            <button class="btn" type="submit" id="start-quiz">Start Quiz</button>
          </div>
 
-         <section class="questions">
-            <div>
-               <h1>Question</h1>
-               <ol>
-                  <li>Answer 0</li>
-                  <li>Answer 1</li>
-                  <li>Answer 2</li>
-                  <li>Answer 3</li>
-               </ol>
+         <div class="quiz-questions" id="quiz-questions">
+            <p id="question"></p>
+            <div class="answer-butons" id="answer-butons">
+               <button id="btn-0"><span id="choice-0"></span></button>
+               <button id="btn-1"><span id="choice-1"></span></button>
+               <button id="btn-2"><span id="choice-2"></span></button>
+               <button id="btn-3"><span id="choice-3"></span></button>
             </div>
-            <div>
-               <p>Correct/Wrong!</p>
-            </div>
-         </section>
-         <section class="all-done">
+            <p id="right-wrong"></p>
+            <audio src="" id="result-audio"></audio>
+         </div>
+         <div class="all-done" id="all-done">
             <h1>All Done!</h1>
             <p>Your final score is: <span>22</span>.</p>
             <p>Enter intitials:</p>
             <input type="text" name="intitials" class="intitials" />
             <button class="btn" type="submit">Submit</button>
-         </section>
-         <section class="high-scores">
+         </div>
+         <div class="high-scores" id="high-scores">
             <h1>High Scores</h1>
             <div class="high-score-wrapper">
                <ol class="high-score-list">
@@ -61,7 +58,7 @@
             </div>
             <button class="btn" type="button">Go Back</button>
             <button class="btn" type="reset">Clear High Scores</button>
-         </section>
+         </div>
       </main>
 
       <script src="./assets/js/script.js"></script>
