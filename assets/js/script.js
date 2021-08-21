@@ -33,6 +33,7 @@ const EXAM_QUESTIONS = QA_SET.length;
 
 var startQuizBtn = document.querySelector("#start-quiz");
 var answerBtn = document.querySelector("#answer-buttons");
+var initialsBtn = document.querySelector("#initials-button");
 var questionCounter = 0;
 var timeCounter = 0;
 var intervalCtrl = 0;
@@ -51,63 +52,36 @@ myMain.removeChild(allDoneDiv);
 myMain.removeChild(highScoresDiv);
 
 var showAllDoneDiv = function () {
-   clearInterval(intervalCtrl);
-   console.log("Entering showAllDoneDiv");
    myMain.removeChild(qAndADiv);
-   console.log("removed qAndADiv");
    myMain.appendChild(allDoneDiv);
-   console.log("appended allDoneDiv");
-   // document.querySelector("#timer").innerHTML = timeCounter;
    document.querySelector("#final-score").innerHTML = timeCounter;
-   console.log("updated final-score");
-};
-
-var timeHandler = function () {
-   console.log("timeHandler " + questionCounter);
-   timeCounter--;
-   document.querySelector("#timer").innerHTML = timeCounter;
-   if (timeCounter === 0) {
-      console.log("timeHandler-showAllDoneDiv");
-      clearInterval(intervalCtrl);
-      showAllDoneDiv();
-   }
 };
 
 var checkCorrectness = function () {
-   console.log("checkCorrectness: " + questionCounter);
    var choice = event.target;
    var choiceIndex = choice.id.substring(4);
    var result = document.querySelector("#right-wrong");
 
    if (parseInt(choiceIndex) === QA_SET[questionCounter].correctAnswerIndex) {
-      console.log("Correct: " + timeCounter);
       result.innerHTML = "Correct!";
    } else {
       result.innerHTML = "Wrong!";
       timeCounter -= WRONG_PENALTY;
-      console.log(timeCounter);
       if (timeCounter <= 0) {
-         console.log("checkcorrectness-showAllDoneDiv");
          timeCounter = 0;
          clearInterval(intervalCtrl);
          document.querySelector("#timer").innerHTML = timeCounter;
-         showAllDoneDiv();
       }
    }
 };
 
 var processEachQuestion = function () {
-   console.log("Process each: " + questionCounter);
-   if (questionCounter < EXAM_QUESTIONS) {
-      checkCorrectness();
-   }
+   checkCorrectness();
    questionCounter++;
-   if (questionCounter < EXAM_QUESTIONS) {
-      console.log("Display One Question: ", questionCounter);
+   if (questionCounter < EXAM_QUESTIONS && timeCounter > 0) {
       displayOneQuestion();
    } else {
-      // clearInterval(intervalCtrl);
-      console.log("processEach-showAllDoneDiv");
+      clearInterval(intervalCtrl);
       showAllDoneDiv();
    }
 };
@@ -119,6 +93,17 @@ var displayOneQuestion = function () {
    for (var i = 0; i < BUTTONS; i++) {
       displayAnswers = qAndADiv.querySelector("#btn-" + i);
       displayAnswers.innerHTML = i + 1 + ". " + QA_SET[questionCounter].answer[i];
+   }
+};
+
+var timeHandler = function () {
+   if (timeCounter > 0) {
+      timeCounter--;
+   }
+   document.querySelector("#timer").innerHTML = timeCounter;
+   if (timeCounter === 0) {
+      clearInterval(intervalCtrl);
+      showAllDoneDiv();
    }
 };
 
@@ -145,3 +130,4 @@ var processQAndADiv = function () {
 myMain.appendChild(startQuizDiv);
 startQuizBtn.addEventListener("click", processQAndADiv);
 answerBtn.addEventListener("click", processEachQuestion);
+initialsBtn.addEventListener("click", showAllDoneDiv);
