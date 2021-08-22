@@ -28,6 +28,7 @@ li {
 }
 
 li:nth-child(odd) {
+   /* 'odd' keyword value */
    background-color: #f3edfc;
 }
 
@@ -35,7 +36,7 @@ li:nth-child(odd) {
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin: 0px 20px;
+   margin: 0px 20px 30px 20px;
 }
 
 .start-page {
