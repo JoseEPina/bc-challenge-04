@@ -31,5 +31,7 @@ The following animation demonstrates the application functionality:
 ### Review
 
 -  The URL of the functional, deployed application:
+-  https://joseepina.github.io/bc-challenge-04/
 
 -  The URL of the GitHub repository:
+-  https://github.com/JoseEPina/bc-challenge-04
