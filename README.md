@@ -12,6 +12,7 @@ This project is a coding assessment built with JavaScript, CSS and HTML. It is d
 
 ## Acceptance Criteria
 
+```
 -  GIVEN I am taking a code quiz
 -  WHEN I click the start button
 -  THEN a timer starts and I am presented with a question
@@ -37,4 +38,3 @@ The following animation demonstrates the application functionality:
 
 -  The URL of the GitHub repository:
 -  https://github.com/JoseEPina/bc-challenge-04
-```
