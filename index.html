@@ -9,8 +9,8 @@
       <link rel="shortcut icon" href="#" />
    </head>
    <body>
-      <header>
-         <div class="topo-block">
+      <main>
+         <div class="top-block" id="top-block">
             <nav class="high-scores">
                <a href="#view-high-scores">View High Scores</a>
             </nav>
@@ -18,9 +18,6 @@
                <p>Time: <span id="timer"></span></p>
             </div>
          </div>
-      </header>
-
-      <main>
          <div class="start-page" id="start-page">
             <h1>Coding Quiz Challenge</h1>
             <p>
@@ -44,20 +41,20 @@
          <div class="all-done" id="all-done">
             <h1>All Done!</h1>
             <p>Your final score is: <span id="final-score"></span>.</p>
-            <p>Enter intitials:</p>
-            <input type="text" name="intitials" class="intitials" />
-            <button class="initials-btn" id="initials-btn" type="button">Submit</button>
+            <form id="initials-form">
+               <p>Enter intitials:</p>
+               <input type="text" id="input-initials" name="input-initials" class="input-initials" />
+               <button class="initials-btn" id="initials-btn" type="submit">Submit</button>
+            </form>
+            <p class="right-wrong" id="right-wrong-ad"></p>
          </div>
          <div class="high-scores" id="high-scores">
             <h1>High Scores</h1>
             <div class="high-score-wrapper">
-               <ol class="high-score-list">
-                  <li>JP - 99</li>
-                  <li>EP - 65</li>
-               </ol>
+               <ol class="high-score-list" id="high-score-list"></ol>
             </div>
-            <button class="btn" type="button">Go Back</button>
-            <button class="btn" type="reset">Clear High Scores</button>
+            <button class="btn-scores" type="button" id="go-back">Go Back</button>
+            <button class="btn-scores" type="reset" id="clear-scores">Clear High Scores</button>
          </div>
       </main>
 

@@ -1,0 +1,7 @@
+{
+   "prettier.tabWidth": 3,
+   "prettier.printWidth": 120,
+   "liveServer.settings.donotShowInfoMsg": true,
+   "editor.defaultFormatter": "esbenp.prettier-vscode",
+   "files.autoSave": "onWindowChange"
+}
