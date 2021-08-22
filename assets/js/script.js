@@ -1,4 +1,4 @@
-//#region variables
+//#region general variables
 // Obj array to store Q's and Ans'
 const QA_SET = [
    {
@@ -55,30 +55,36 @@ const QA_SET = [
       correctAnswerIndex: 1,
    },
 ];
-
+// Constants
 const BUTTONS = 4;
 const TIME_LIMIT = 100;
 const TIME_TICK = 1000;
 const WRONG_PENALTY = 10;
 const EXAM_QUESTIONS = QA_SET.length;
 const LOCAL_STG_KEY = "coding-quiz";
-
+// DOM variables
 var startQuizBtn = document.querySelector("#start-quiz");
 var answerBtn = document.querySelector("#answer-buttons");
-var initialsBtn = document.querySelector("#initials-form");
+var allDoneBtn = document.querySelector("#initials-form");
 var goBackBtn = document.querySelector("#go-back");
 var clearScoresBtn = document.querySelector("#clear-scores");
 var olHighestScoresList = document.querySelector("#high-score-list");
+var viewHsBtn = document.querySelector("#view-hs");
+// Program control variables
 var questionCounter = 0;
 var timeCounter = 0;
 var intervalCtrl = 0;
+// Object assigned for each player
 var currentScorePair = {
    initials: "",
    score: 0,
 };
+// Array to hold array of objects
 var highestScores = [];
+//#endregion general variables
 
-// Copying DOM sections into Global variables; to manage page display.
+//#region DOM variables
+// Copying DOM div elements into Global variables; to manage page display.
 var myMain = document.querySelector("main");
 var topBlockDiv = document.querySelector("#top-block");
 var startQuizDiv = document.querySelector("#start-page");
@@ -91,66 +97,158 @@ myMain.removeChild(startQuizDiv);
 myMain.removeChild(qAndADiv);
 myMain.removeChild(allDoneDiv);
 myMain.removeChild(highScoresDiv);
-//#endregion variables
+//#endregion DOM variables
 
-var processClearScores = function () {
-   cleanHsList();
-   localStorage.setItem(LOCAL_STG_KEY, JSON.stringify(highestScores));
-};
+//#region startQuizBtn
+var displayOneQuestion = function () {
+   var displayQuestion = qAndADiv.querySelector("#question"); // Gets the element needed to display the question
+   displayQuestion.innerHTML = QA_SET[questionCounter].question; // displays the question from QA_SET
 
-var cleanHsList = function () {
-   while (olHighestScoresList.firstChild) {
-      olHighestScoresList.removeChild(olHighestScoresList.firstChild);
+   for (var i = 0; i < BUTTONS; i++) {
+      // Displays ALL available answer choices
+      displayAnswers = qAndADiv.querySelector("#btn-" + i); // Gets the element needed to display the choice #"i"
+      displayAnswers.innerHTML = i + 1 + ". " + QA_SET[questionCounter].answer[i]; // Displays the answer into the button
    }
-   highestScores.length = 0;
 };
 
-var processGoBack = function () {
-   myMain.removeChild(highScoresDiv);
-   myMain.appendChild(topBlockDiv);
-   myMain.appendChild(startQuizDiv);
-   document.querySelector("#timer").innerHTML = "";
-   cleanHsList();
+var timeHandler = function () {
+   // Utility func to manage the Timer
+   if (timeCounter > 0) {
+      // Validates to prevent Negative count.
+      timeCounter--;
+   }
+   document.querySelector("#timer").innerHTML = timeCounter; // Displays current Timer countdown
+   if (timeCounter === 0) {
+      // Exam allowed time has been exhausted (reached 0).
+      clearInterval(intervalCtrl); // STOPS Timer
+      showAllDoneDiv(); // Displays AllDoneDiv page
+   }
 };
 
+var startControls = function () {
+   // Utility func to initialize program controls
+   timeCounter = TIME_LIMIT; // Sets exam Time limit
+   document.querySelector("#timer").innerHTML = timeCounter; // Display Timer
+   intervalCtrl = setInterval(timeHandler, TIME_TICK); // STARTS Timer countdown with handler function to manage time
+   questionCounter = 0; // Sets exam initial question index
+};
+
+var showQAndADiv = function () {
+   // Displays exam question page
+   myMain.removeChild(startQuizDiv);
+   myMain.appendChild(qAndADiv);
+};
+
+var processQAndADiv = function () {
+   // Callback func for startQuizBtn Event Listener
+   showQAndADiv(); // Enables exam area page
+   startControls(); // Initialize program controls
+   displayOneQuestion(); // Displays first question
+};
+//#endregion startQuizBtn
+
+//#region answerBtn
+var showAllDoneDiv = function () {
+   // Displays allDone page
+   myMain.removeChild(qAndADiv);
+   myMain.appendChild(allDoneDiv);
+   document.querySelector("#input-initials").value = ""; // Clear input field
+   document.querySelector("#final-score").innerHTML = timeCounter; // display final score
+   document.querySelector("#timer").innerHTML = timeCounter; // displays final timer
+};
+
+var checkCorrectness = function () {
+   // Determines if answer is correct or incorrect
+   var choice = event.target; // Identifies which answer (button-clicked) was selected
+   var choiceIndex = choice.id.substring(4); // Get Index ID number off from button element (of button-clicked)
+   var result = document.querySelector("#right-wrong"); // Store user selection into result variable
+   // Compare user selection (choiceIndex) with correct answer property
+   if (parseInt(choiceIndex) === QA_SET[questionCounter].correctAnswerIndex) {
+      result.innerHTML = "Correct!";
+      setTimeout(function () {
+         result.innerHTML = "";
+      }, 1000);
+   } else {
+      result.innerHTML = "Wrong!";
+      setTimeout(function () {
+         result.innerHTML = "";
+      }, 1000);
+      timeCounter -= WRONG_PENALTY; // Apply penalty time deduction
+      if (timeCounter <= 0) {
+         // Checks if penalty exhausted available exam time
+         timeCounter = 0;
+         clearInterval(intervalCtrl); // STOPS Timer
+         document.querySelector("#timer").innerHTML = timeCounter; // Update and Display Timer when stopped (back to 0)
+      }
+   }
+};
+
+var processEachQuestion = function () {
+   checkCorrectness();
+   questionCounter++; // increase exam question Index
+
+   // If exam has not finished AND there is still time available
+   if (questionCounter < EXAM_QUESTIONS && timeCounter > 0) {
+      displayOneQuestion(); // Display next question
+   } else {
+      // Exam is Finished OR time is exhausted
+      clearInterval(intervalCtrl); // STOPS Timer
+      showAllDoneDiv(); // Displays allDoneDiv page
+   }
+};
+//#endregion answerBtn
+
+//#region allDoneBtn
 var displayHighScores = function () {
-   // Sort results in Descending order
+   // Sort results in Descending order ( -1 : 1 ), use (1 : -1) for ascending order
    highestScores.sort((a, b) => (a.score > b.score ? -1 : 1));
    for (var i = 0; i < highestScores.length; i++) {
-      var liElement = document.createElement("li");
-      liElement.className = "hs-list";
+      var liElement = document.createElement("li"); // creates individual <li> elements
+
+      // Build element with initials & score
+      // This array contains only the highest Scores
       liElement.innerHTML = highestScores[i].initials + " - " + highestScores[i].score;
       olHighestScoresList.appendChild(liElement);
    }
 };
 
 var showHighScores = function () {
+   // Displays highest score page
    myMain.removeChild(topBlockDiv);
    myMain.removeChild(allDoneDiv);
    myMain.appendChild(highScoresDiv);
    displayHighScores();
 };
 
+// Process current player initials & score and determines if currentScore is the highest.
+// Displays status messages to the player by comparing current score with previous stored Score.
 var processLocalStorage = function () {
-   currentScorePair.initials = document.querySelector("#input-initials").value;
-   currentScorePair.score = timeCounter;
+   currentScorePair.initials = document.querySelector("#input-initials").value.toUpperCase(); // Get player initials off from input box
+   currentScorePair.score = timeCounter; // Assign current score from current timer value
    highestScores = [];
-   var storedScores = localStorage.getItem(LOCAL_STG_KEY);
+   var storedScores = localStorage.getItem(LOCAL_STG_KEY); // Retrieve localStorage data
    if (!storedScores) {
-      highestScores.push(currentScorePair);
+      // Check if localStorage is empty of data
+      highestScores.push(currentScorePair); // If empty, pushes currentScorePair
       window.alert("Congrats " + currentScorePair.initials + "! Your first score is " + currentScorePair.score);
    } else {
-      highestScores = JSON.parse(storedScores);
+      // LocalStorage is NOT empty
+      highestScores = JSON.parse(storedScores); // Get highestScores array populated with localStorage data
+      // Checks if current initials exists in highestScores array and returns the index number, if it is found.
       var initialsIndex = highestScores.findIndex((i) => i.initials === currentScorePair.initials);
 
       if (initialsIndex < 0) {
-         highestScores.push(currentScorePair);
+         // initials are NOT in the array
+         highestScores.push(currentScorePair); // These are new initials pushed into the array
          window.alert("Congrats " + currentScorePair.initials + "! Your first score is " + currentScorePair.score);
       } else {
-         var previousScore = highestScores[initialsIndex].score;
+         // initials ARE already in the array
+         var previousScore = highestScores[initialsIndex].score; // Gets previous score from array
          if (previousScore >= currentScorePair.score) {
+            // currentScore is less than or equal to previous score.
             window.alert("You did not beat your previous high score... Keep trying!");
          } else {
+            // currentScore is greater than previousScore
             window.alert(
                "Congrats " +
                   currentScorePair.initials +
@@ -161,106 +259,82 @@ var processLocalStorage = function () {
                   ". New Highest Score: " +
                   currentScorePair.score
             );
+            // Updates array with new highestScore.
             highestScores[initialsIndex].score = currentScorePair.score;
          }
       }
    }
+   // Updates localStorage with new highestScore.
    localStorage.setItem(LOCAL_STG_KEY, JSON.stringify(highestScores));
 };
 
 var processAllDone = function (event) {
-   event.preventDefault();
+   // Callback func for allDoneBtn Event Listener
+   event.preventDefault(); // prevent form submission
    if (document.querySelector("#input-initials").value === "") {
+      // Validates for empty initials
       window.alert("Please enter your initials!");
       return;
    }
    processLocalStorage();
    showHighScores();
 };
+//#endregion allDoneBtn
 
-var showAllDoneDiv = function () {
-   myMain.removeChild(qAndADiv);
-   myMain.appendChild(allDoneDiv);
-   document.querySelector("#input-initials").value = "";
-   document.querySelector("#final-score").innerHTML = timeCounter;
-   document.querySelector("#timer").innerHTML = timeCounter;
-};
-
-var checkCorrectness = function () {
-   var choice = event.target;
-   var choiceIndex = choice.id.substring(4);
-   var result = document.querySelector("#right-wrong");
-
-   if (parseInt(choiceIndex) === QA_SET[questionCounter].correctAnswerIndex) {
-      result.innerHTML = "Correct!";
-   } else {
-      result.innerHTML = "Wrong!";
-      timeCounter -= WRONG_PENALTY;
-      if (timeCounter <= 0) {
-         timeCounter = 0;
-         clearInterval(intervalCtrl);
-         document.querySelector("#timer").innerHTML = timeCounter;
-      }
+//#region goBackBtn
+var cleanHsList = function () {
+   // Utility func to clear screen
+   // Removes list of Scores
+   while (olHighestScoresList.firstChild) {
+      olHighestScoresList.removeChild(olHighestScoresList.firstChild);
    }
+   highestScores.length = 0; // Initialize array for new list
 };
 
-var processEachQuestion = function () {
-   checkCorrectness();
-   questionCounter++;
+var processGoBack = function () {
+   // Callback func for goBackBtn Event Listener
+   myMain.removeChild(highScoresDiv);
+   myMain.appendChild(topBlockDiv);
+   myMain.appendChild(startQuizDiv);
+   timeCounter = 0; // Reset Timer for restart
+   document.querySelector("#timer").innerHTML = ""; // Reset display of timeCounter on screen
+   cleanHsList(); // Remove list of scores from screen
+};
+//#endregion goBackBtn
 
-   if (questionCounter < EXAM_QUESTIONS && timeCounter > 0) {
-      displayOneQuestion();
-   } else {
-      clearInterval(intervalCtrl);
-      showAllDoneDiv();
+//#region clearScoresBtn
+var processClearScores = function () {
+   // Utility func to clear screen and localStorage
+   cleanHsList();
+   localStorage.setItem(LOCAL_STG_KEY, JSON.stringify(highestScores));
+};
+//#endregion clearScoresBtn
+
+//#region viewHsBtn
+var processViewHs = function () {
+   clearInterval(intervalCtrl); // Stop timer to interrupt current process and view HighScores
+   while (myMain.firstChild) {
+      // Removes all DOM elements from display
+      myMain.removeChild(myMain.firstChild);
    }
-};
-
-var displayOneQuestion = function () {
-   var displayQuestion = qAndADiv.querySelector("#question");
-   displayQuestion.innerHTML = QA_SET[questionCounter].question;
-
-   for (var i = 0; i < BUTTONS; i++) {
-      displayAnswers = qAndADiv.querySelector("#btn-" + i);
-      displayAnswers.innerHTML = i + 1 + ". " + QA_SET[questionCounter].answer[i];
+   myMain.appendChild(highScoresDiv); // Display HighScore page
+   // Get current data from localStorage
+   var storedScores = localStorage.getItem(LOCAL_STG_KEY);
+   if (storedScores) {
+      // If localStorage exists,
+      highestScores = JSON.parse(storedScores);
    }
+   displayHighScores();
 };
+//#endregion viewHsBtn
 
-var timeHandler = function () {
-   if (timeCounter > 0) {
-      timeCounter--;
-   }
-   document.querySelector("#timer").innerHTML = timeCounter;
-   if (timeCounter === 0) {
-      clearInterval(intervalCtrl);
-      showAllDoneDiv();
-   }
-};
-
-var startControls = function () {
-   timeCounter = TIME_LIMIT;
-   document.querySelector("#timer").innerHTML = timeCounter;
-   intervalCtrl = setInterval(timeHandler, TIME_TICK);
-   questionCounter = 0;
-};
-
-var showQAndADiv = function () {
-   myMain.removeChild(startQuizDiv);
-   myMain.appendChild(qAndADiv);
-};
-
-var processQAndADiv = function () {
-   showQAndADiv();
-   startControls();
-   displayOneQuestion();
-
-   // console.log(displayQuestion);
-};
-
-// Display start quiz page back to DOM.
+// Display start quiz page
 myMain.appendChild(startQuizDiv);
+
+// Event Listeners
 startQuizBtn.addEventListener("click", processQAndADiv);
 answerBtn.addEventListener("click", processEachQuestion);
-initialsBtn.addEventListener("submit", processAllDone);
+allDoneBtn.addEventListener("submit", processAllDone);
 goBackBtn.addEventListener("click", processGoBack);
 clearScoresBtn.addEventListener("click", processClearScores);
+viewHsBtn.addEventListener("click", processViewHs);
